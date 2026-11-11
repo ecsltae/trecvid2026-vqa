@@ -1,0 +1,25 @@
+# TRECVID VQA 2025 — v3 run matrix (single-stage qwen3-vl, question-conditioned)
+# Deadlines: AG runs due 2026-08-29, MC runs due 2026-09-29.
+# Rationale: probes 2026-07-15 — qwen3-vl:8b beats llava:13b baseline on AG
+# (STS@1 0.441 vs 0.395) and MC (top-1 74.4% vs 18.6%); two-stage v2 retired.
+
+task: trecvid_vqa_2025
+
+paths:
+  frames_dir: data/vqa/frames_full
+  topics_ag: data/vqa/topics/vqa_2025_ag_topics.csv   # all 2000 (frame-less get question-only fallback)
+  topics_mc: data/vqa/topics/vqa_2025_mc_topics.csv   # all 2000
+  training_dir: data/vqa/training
+  output_dir: runs/vqa
+
+runs:
+  r1: {model: qwen3-vl:8b-instruct,      fewshot: false, tag: qwen3vl8b}
+  r2: {model: qwen3-vl:30b-a3b-instruct, fewshot: false, tag: qwen3vl30b}
+  r3: {model: qwen3-vl:30b-a3b-instruct, fewshot: true,  tag: qwen3vl30b_fewshot}
+
+generation:
+  max_frames: 8
+  num_answers: 10        # track allows up to 10 ranked AG answers
+  num_predict: 1024      # hard token cap — kills runaway loops
+  call_timeout: 300      # seconds, enforced at HTTP layer
+  temperature: 0.1

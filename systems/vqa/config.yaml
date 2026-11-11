@@ -1,0 +1,31 @@
+task: trecvid_vqa_2025
+run_id: TREC_VQA_llava_baseline
+
+paths:
+  videos_dir: data/vqa/videos
+  frames_dir: data/vqa/frames
+  topics_file: data/vqa/topics.csv
+  output_dir: runs/vqa
+
+video_download:
+  format: "bestvideo[height<=720]+bestaudio/best[height<=720]"
+  output_template: "%(id)s.%(ext)s"
+
+frame_extraction:
+  mode: keyframe        # keyframe | uniform
+  uniform_fps: 1
+  max_frames: 8         # cap for VLM context window
+
+ollama:
+  vision_model: llava:13b
+  text_model: qwen3:32b  # fallback for MC CoT
+  temperature: 0.1
+  timeout: 60
+
+ag_subtask:
+  max_answer_words: 50
+  num_answers: 5         # ranked list of up to 10 answers
+
+mc_subtask:
+  prompt_style: cot      # chain-of-thought
+  shuffle_choices: true  # randomize A/B/C/D order to eliminate positional bias

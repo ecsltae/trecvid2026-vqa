@@ -1,0 +1,34 @@
+task: trecvid_vqa_2025
+run_id: TREC_VQA_twostage
+
+paths:
+  videos_dir: data/vqa/videos_full
+  frames_dir: data/vqa/frames_full
+  topics_ag: data/vqa/topics/vqa_2025_ag_topics.csv
+  topics_mc: data/vqa/topics/vqa_2025_mc_topics.csv
+  training_dir: data/vqa/training
+  output_dir: runs/vqa
+
+video_download:
+  format: "bestvideo[height<=720]+bestaudio/best[height<=720]"
+  output_template: "%(id)s.%(ext)s"
+
+frame_extraction:
+  mode: keyframe
+  uniform_fps: 1
+  max_frames: 4         # 4 frames: good visual coverage, ~2x faster than 8
+
+ollama:
+  vision_model: llava:13b
+  stage2_model: qwen3:32b    # text-only reasoning stage
+  text_model: qwen3:32b      # kept for backward compat with v1 scripts
+  temperature: 0.1
+  timeout: 120
+
+ag_subtask:
+  max_answer_words: 50
+  num_answers: 10
+
+mc_subtask:
+  prompt_style: cot
+  shuffle_choices: false     # v2 uses explicit CoT with option labels — no need to shuffle

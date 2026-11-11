@@ -1,0 +1,11 @@
+data/
+submissions/
+logs/
+.venv/
+__pycache__/
+*.pyc
+paper/tex/*.aux
+paper/tex/*.bbl
+paper/tex/*.blg
+paper/tex/*.log
+paper/tex/*.out
